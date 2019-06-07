@@ -21,7 +21,12 @@ asset MerkleRoot identified by batchID {
   --> Professor[] signed 
   o String status default = 'unverified'
 }
-
+asset verificationRequest identified by verificationID{
+  --> User user
+  o String verificationID
+  o String transcriptHash
+  o String result
+}
 participant University identified by universityID {
   o String universityID
   o String universityName
@@ -45,5 +50,4 @@ transaction verifyTranscript {
   o String[] merklePath
   --> User user
   --> University university
-  o String result default = 'unverified'
 }
