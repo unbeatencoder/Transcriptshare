@@ -44,6 +44,9 @@ transaction signature{
   --> Professor professor
   --> MerkleRoot merkleRoot
 }
+transaction uploadTranscript{
+  o MerkleRoot merkleRoot
+}
 transaction verifyTranscript {
   o String transcriptHash
   o String batchID
