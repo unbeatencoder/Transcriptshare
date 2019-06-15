@@ -27,9 +27,31 @@ rule NetworkAdminSystem {
     resource: "org.hyperledger.composer.system.**"
     action: ALLOW
 }
-
-rule createMerkleRootThroughTx {
-    description: "Allow participant to create merkle Root only through upload Transript"
+rule SystemACLForUniversity {
+  description:  "System ACL to permit all access"
+  participant: "org.hyperledger.composer.system.Participant"
+  operation: ALL
+  resource: "org.hyperledger.composer.system.**"
+  action: ALLOW
+}
+rule universityReadMerkleRoot{
+	description: "Allow universities to read their own merkle Root Data"
+    participant(p):"org.daiict.mynetwork.University"
+    operation: READ
+    resource(r):"org.daiict.mynetwork.MerkleRoot"
+    condition:( r.university.getIdentifier() == p.getIdentifier())
+    action: ALLOW
+}
+rule universityCrateUTTX{
+	description: "Allow university to create transaction uploadTranscript"
+    participant(p):"org.daiict.mynetwork.University"
+ 	operation: CREATE
+    resource(r):"org.daiict.mynetwork.uploadTranscript"
+    condition:(true)
+    action: ALLOW
+}
+rule universityCreateMRByUTTX{
+	description: "Allow participant to create merkle Root only through upload Transript"
     participant(p): "org.daiict.mynetwork.University"
     operation: CREATE
     resource(r): "org.daiict.mynetwork.MerkleRoot"
@@ -37,18 +59,77 @@ rule createMerkleRootThroughTx {
     condition:(true)
     action: ALLOW 
 }
-rule universityRead{
-	description: "Allow universities to read their own merkle Root Data"
-    participant(p):"org.daiict.mynetwork.University"
-    operation: READ
-    resource(r):"org.daiict.mynetwork.MerkleRoot"
-    condition:( r.owner.getIdentifier() == p.getIdentifier())
+rule SystemACLForProfessor{
+	description:"System ACL for Professors"
+    participant: "org.daiict.mynetwork.Professor"
+	operation: ALL
+    resource: "org.hyperledger.composer.system.**"
     action: ALLOW
 }
-rule UniversityreadSystem {
-description: "Grant ALL participant full access to system resources"
-participant: "org.daiict.mynetwork.University"
-operation: READ
-resource: "org.hyperledger.composer.system.**"
-action: ALLOW
+rule professorReadMerkleRoot{
+	description: "Allow professors to read their own merkle Root Data"
+    participant(p):"org.daiict.mynetwork.Professor"
+    operation: READ
+    resource(r):"org.daiict.mynetwork.MerkleRoot"
+    condition:( r.university.getIdentifier() == p.university.getIdentifier())
+    action: ALLOW
 }
+rule professorCrateSTX{
+	description: "Allow professor to create transaction signature"
+    participant(p):"org.daiict.mynetwork.Professor"
+ 	operation: CREATE
+    resource(r):"org.daiict.mynetwork.signature"
+    condition:(true)
+    action: ALLOW
+}
+rule professorUpdateMRBySTX{
+ 	description: "Allow professor to update MerkleRoot through signature"
+    participant(p): "org.daiict.mynetwork.Professor"
+    operation: READ, UPDATE
+    resource(r): "org.daiict.mynetwork.MerkleRoot"
+    transaction(tx): "org.daiict.mynetwork.signature"
+    condition:(true)
+    action: ALLOW 
+}
+rule SystemACLForUser{
+	description:"System ACL for Professors"
+    participant: "org.daiict.mynetwork.User"
+	operation: ALL
+    resource: "org.hyperledger.composer.system.**"
+    action: ALLOW
+}
+rule userReadVerificationRequests{
+	description: "Allow users to read their own verification Requests"
+    participant(p):"org.daiict.mynetwork.User"
+    operation: READ
+    resource(r):"org.daiict.mynetwork.verificationRequest"
+    condition:( r.user.getIdentifier() == p.getIdentifier())
+    action: ALLOW
+}
+rule userCrateVTTX{
+	description: "Allow user to create transaction verifiyTranscript"
+    participant(p):"org.daiict.mynetwork.User"
+ 	operation: CREATE
+    resource(r):"org.daiict.mynetwork.verifyTranscript"
+    condition:(true)
+    action: ALLOW
+}
+rule userUpdateVRByVTTX{
+ 	description: "Allow transaction to create asset verification"
+    participant(p): "org.daiict.mynetwork.User"
+    operation: CREATE
+    resource(r): "org.daiict.mynetwork.verificationRequest"
+    transaction(tx): "org.daiict.mynetwork.verifyTranscript"
+    condition:(true)
+    action: ALLOW 
+}
+rule userReadMRByVTTX{
+ 	description: "Allow transaction to read merkle Root via transaction verify transcript"
+    participant(p): "org.daiict.mynetwork.User"
+    operation: READ
+    resource(r): "org.daiict.mynetwork.MerkleRoot"
+    transaction(tx): "org.daiict.mynetwork.verifyTranscript"
+    condition:(true)
+    action: ALLOW 
+}
+
