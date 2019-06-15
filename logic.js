@@ -29,7 +29,7 @@
         var signed=signature.merkleRoot.signed;
         var professor=signature.professor.professorID;
         var professorUniversity=signature.professor.university;
-        if(professorUniversity!=university){
+        if(professorUniversity.getFullyQualifiedIdentifier()!=university.getFullyQualifiedIdentifier()){
             throw new Error('You are not affiliated with this university.');
         }
         var isSignatory=signatories.includes(signature.professor);
