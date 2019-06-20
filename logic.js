@@ -4,9 +4,8 @@
      * @transaction
      */
     function upload(uploadTranscript){
-      console.log(uploadTranscript.merkleRoot.status);
-        if(uploadTranscript.merkleRoot.status!='unverified'){
-                throw new Error('Please change status to unverified');
+        if(uploadTranscript.merkleRoot.status!='unverified'||uploadTranscript.merkleRoot.signed.length!=0){
+                throw new Error('Please change status to unverified or set signed array to null');
         }
         else{
               return getAssetRegistry('org.daiict.mynetwork.MerkleRoot')
@@ -63,7 +62,6 @@
         var t_user=verifyTranscript.user;
         var t_university=verifyTranscript.university;
         // Get the MerkleRoot Asset Registry
-    console.log(t_batchID);
         return getAssetRegistry('org.daiict.mynetwork.MerkleRoot')
             .then(function (assetRegistry) {
             // Get the specific merkle Root from the Merkle Root asset registry.
@@ -93,8 +91,12 @@
                 });
             }
             else{
-                console.log(d_merkleRootValue);
-            console.log(t_transcriptHash);
+                var size=t_merklePath.length;
+                var i=0;
+                for (i=0;i<size;i++)
+				{
+					t_transcriptHash=sha256(t_transcriptHash+t_merklePath[i]);
+				}	
                 if(d_merkleRootValue==t_transcriptHash){  
                     var factory=getFactory();
                     var random=Math.floor((Math.random() * 1000) + 1);
@@ -141,4 +143,6 @@
             throw new Error('Object Not Found Sorry');
             });
     }
- 
+    function sha256(s){
+    	return s;
+    }
