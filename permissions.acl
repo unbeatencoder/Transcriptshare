@@ -27,12 +27,12 @@ rule NetworkAdminSystem {
     resource: "org.hyperledger.composer.system.**"
     action: ALLOW
 }
-rule SystemACLForUniversity {
-  description:  "System ACL to permit all access"
-  participant: "org.hyperledger.composer.system.Participant"
-  operation: ALL
-  resource: "org.hyperledger.composer.system.**"
-  action: ALLOW
+rule SystemACL {
+    description:  "System ACL to permit all access"
+    participant: "org.hyperledger.composer.system.Participant"
+    operation: ALL
+    resource: "org.hyperledger.composer.system.**"
+    action: ALLOW
 }
 rule universityReadMerkleRoot{
 	description: "Allow universities to read their own merkle Root Data"
@@ -56,15 +56,8 @@ rule universityCreateMRByUTTX{
     operation: CREATE
     resource(r): "org.daiict.mynetwork.MerkleRoot"
     transaction(tx): "org.daiict.mynetwork.uploadTranscript"
-    condition:(true)
+    condition:(r.university.getIdentifier() == p.getIdentifier())
     action: ALLOW 
-}
-rule SystemACLForProfessor{
-	description:"System ACL for Professors"
-    participant: "org.daiict.mynetwork.Professor"
-	operation: ALL
-    resource: "org.hyperledger.composer.system.**"
-    action: ALLOW
 }
 rule professorReadMerkleRoot{
 	description: "Allow professors to read their own merkle Root Data"
@@ -91,13 +84,6 @@ rule professorUpdateMRBySTX{
     condition:(true)
     action: ALLOW 
 }
-rule SystemACLForUser{
-	description:"System ACL for Professors"
-    participant: "org.daiict.mynetwork.User"
-	operation: ALL
-    resource: "org.hyperledger.composer.system.**"
-    action: ALLOW
-}
 rule userReadVerificationRequests{
 	description: "Allow users to read their own verification Requests"
     participant(p):"org.daiict.mynetwork.User"
@@ -114,13 +100,13 @@ rule userCrateVTTX{
     condition:(true)
     action: ALLOW
 }
-rule userUpdateVRByVTTX{
+rule userCreateVRByVTTX{
  	description: "Allow transaction to create asset verification"
     participant(p): "org.daiict.mynetwork.User"
     operation: CREATE
     resource(r): "org.daiict.mynetwork.verificationRequest"
     transaction(tx): "org.daiict.mynetwork.verifyTranscript"
-    condition:(true)
+    condition:(r.user.getIdentifier() == p.getIdentifier())
     action: ALLOW 
 }
 rule userReadMRByVTTX{
